@@ -37,11 +37,10 @@ export class TSDB {
         if (!fs.existsSync(this.dbFilePath)) {
             fs.writeFileSync(this.dbFilePath, "{}")
         } else {
-            /*
-            if (!(fs.readFileSync(this.dbFilePath, "utf-8").endsWith("}") && fs.readFileSync(this.dbFilePath, "utf-8").endsWith("{"))) {
+            //check if the file is a valid json file
+            if (!(fs.readFileSync(this.dbFilePath, "utf-8").endsWith("}") && fs.readFileSync(this.dbFilePath, "utf-8").startsWith("{"))) {
                 throw new Error(`${dbFileName} is not a valid JSON file`)
             }
-            */
         }
     }
 
@@ -65,6 +64,7 @@ export class TSDB {
     async createTable(tableName: string, colums: columData): Promise<void> {
         let dbNow = this.readDb()
 
+        //create a new table in the db
         dbNow = Object.assign(dbNow, {
             [tableName]: {
                 "TABLEINFO": colums,
@@ -118,13 +118,16 @@ export class TSDB {
         }
     }
 
+    //read an entire table and return it
     async getEntireTable(tableName: string): Promise<table[]> {
         let dbNow = this.readDb()
 
+        //check if table exists
         if (typeof dbNow[tableName] == "undefined") {
             throw new Error(`Table ${tableName} does not exist`)
         }
 
+        //return the table
         return dbNow[tableName].TABLEDATA
     }
 }
