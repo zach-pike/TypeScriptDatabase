@@ -1,0 +1,2 @@
+# todo
+* Add readKeyInTable function
